@@ -1,9 +1,9 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import apiRouter from './routes/api';
 
 const app = express();
 
-app.get('/', (req, res) => {
+app.get('/', (req: Request, res: Response): void => {
   res.send('Welcome to the home page!');
 });
 

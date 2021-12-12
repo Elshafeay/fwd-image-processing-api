@@ -1,11 +1,25 @@
-import express from 'express';
-import * as path from 'path';
+import express, { Request, Response } from 'express';
+import path from 'path';
 import fs from 'fs';
 import { htmlError, sharpResizing } from '../../../utils/common';
+const { query, validationResult } = require('express-validator');
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/', [
+
+  // making some validation on the width & height
+  query('width').optional().isInt(),
+  query('height').optional().isInt(),
+
+], async (req: Request, res: Response): Promise<void|Response> => {
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    // User provided invalid width or height
+    return res.status(400).send(htmlError('Invalid Height/Width Parameters!'));
+  }
+
   const { filename: imageName, width, height } = req.query;
 
   const thumbPath = path.join(process.cwd(), `public/thumbnails/${imageName}-${width}x${height}.jpg`);
